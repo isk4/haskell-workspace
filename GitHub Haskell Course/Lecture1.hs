@@ -63,19 +63,13 @@ Try to use local variables (either let-in or where) to implement this
 function.
 -}
 minmax :: Int -> Int -> Int -> Int
-minmax x y z = maximum (x : y : z : []) - minimum (x : y : z : [])
+minmax x y z = compare (>) (x : y : z : []) - compare (<) (x : y : z : [])
     where
-        maximum :: [Int] -> Int
-        maximum (x:xs)
+        compare :: (Int -> Int -> Bool) -> [Int] -> Int
+        compare comparison (x:xs)
             | null xs = x
-            | x > (head xs) = maximum (x : (tail xs))
-            | otherwise = maximum xs
-          
-        minimum :: [Int] -> Int
-        minimum (x:xs)
-            | null xs = x
-            | x < (head xs) = minimum (x : (tail xs))
-            | otherwise = minimum xs  
+            | comparison x (head xs) = compare comparison (x : (tail xs))
+            | otherwise = compare comparison xs 
 
 {- | Implement a function that takes a string, start and end positions
 and returns a substring of a given string from the start position to
