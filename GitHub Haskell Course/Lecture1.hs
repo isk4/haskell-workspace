@@ -63,12 +63,12 @@ Try to use local variables (either let-in or where) to implement this
 function.
 -}
 minmax :: Int -> Int -> Int -> Int
-minmax x y z = compare (>) (x : y : z : []) - compare (<) (x : y : z : [])
+minmax x y z = compare (>) [x, y, z] - compare (<) [x, y, z]
     where
         compare :: (Int -> Int -> Bool) -> [Int] -> Int
         compare comparison (x:xs)
             | null xs = x
-            | comparison x (head xs) = compare comparison (x : (tail xs))
+            | comparison x (head xs) = compare comparison (x : tail xs)
             | otherwise = compare comparison xs 
 
 {- | Implement a function that takes a string, start and end positions
