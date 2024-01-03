@@ -1,3 +1,4 @@
+
 module Lecture2
     ( -- * Normal
       lazyProduct
@@ -22,7 +23,8 @@ module Lecture2
     ) where
 
 -- VVV If you need to import libraries, do it after this line ... VVV
-
+import Data.Char
+import Distribution.Simple.Utils (xargs)
 -- ^^^ and before this line. Otherwise the test suite might fail  ^^^
 
 {- | Implement a function that finds a product of all the numbers in
@@ -58,7 +60,10 @@ return the removed element.
 >>> removeAt 10 [1 .. 5]
 (Nothing,[1,2,3,4,5])
 -}
-removeAt = error "TODO"
+removeAt :: Int -> [Int] -> (Maybe Int, [Int])
+removeAt i xs
+  | i > length xs - 1 = (Nothing, xs)
+  | otherwise = (Just (xs !! i), take i xs ++ drop (i + 1) xs)
 
 {- | Write a function that takes a list of lists and returns only
 lists of even lengths.
@@ -69,7 +74,9 @@ lists of even lengths.
 ♫ NOTE: Use eta-reduction and function composition (the dot (.) operator)
   in this function.
 -}
-evenLists = error "TODO"
+
+evenLists :: [[Int]] -> [[Int]]
+evenLists = filter (even . length)
 
 {- | The @dropSpaces@ function takes a string containing a single word
 or number surrounded by spaces and removes all leading and trailing
@@ -85,7 +92,9 @@ spaces.
 
 🕯 HINT: look into Data.Char and Prelude modules for functions you may use.
 -}
-dropSpaces = error "TODO"
+
+dropSpaces :: [Char] -> [Char]
+dropSpaces = filter (not . isSpace)
 
 {- |
 
@@ -169,7 +178,11 @@ False
 True
 -}
 isIncreasing :: [Int] -> Bool
-isIncreasing = error "TODO"
+isIncreasing [] = False
+isIncreasing (x:xs)
+  | null xs = True
+  | x > head xs = False
+  | otherwise = isIncreasing xs
 
 {- | Implement a function that takes two lists, sorted in the
 increasing order, and merges them into new list, also sorted in the
@@ -182,7 +195,12 @@ verify that.
 [1,2,3,4,7]
 -}
 merge :: [Int] -> [Int] -> [Int]
-merge = error "TODO"
+merge xs [] = xs
+merge [] ys = ys
+merge (x:xs) (y:ys)
+  | x < y = x : merge xs (y:ys)
+  | otherwise = y : merge (x:xs) ys
+
 
 {- | Implement the "Merge Sort" algorithm in Haskell. The @mergeSort@
 function takes a list of numbers and returns a new list containing the
@@ -198,8 +216,23 @@ The algorithm of merge sort is the following:
 >>> mergeSort [3, 1, 2]
 [1,2,3]
 -}
+
+divide :: [Int] -> ([Int], [Int])
+divide [] = ([],[])
+divide xs = splitAt (div xsLength 2) xs where xsLength = length xs
+
+auxMerge :: [Int] -> [Int] -> [Int]
+auxMerge xs [] = xs
+auxMerge [] ys = ys
+auxMerge xs ys
+  | head ys >= last xs = xs ++ ys
+  | otherwise = ys ++ xs
+
 mergeSort :: [Int] -> [Int]
-mergeSort = error "TODO"
+mergeSort [] = []
+mergeSort xs
+  | length xs < 2 = xs
+  | otherwise = auxMerge (mergeSort (fst (divide xs))) (mergeSort (snd (divide xs)))
 
 
 {- | Haskell is famous for being a superb language for implementing
